@@ -33,12 +33,14 @@ int ThreadPool::Start(size_t start_threads) {
 }
 
 int ThreadPool::Stop() {
-    const std::unique_lock status_lock(status_wait_mutex);
-    if (status == STOP) {
-        return -1;
-    }
+    {
+        const std::unique_lock status_lock(status_wait_mutex);
+        if (status == STOP) {
+            return -1;
+        }
 
-    status = STOP;
+        status = STOP;
+    }
     status_wait_cond.notify_all();
     task_cond.notify_all();
 
